@@ -59,7 +59,7 @@ As you can see:
 
 This list can be infinitely long or complex but mind the complexity as the resulting wordlist sizes grow rather large, rather quickly.
 
-The following command was used to build the example wordlist:
+The previous command was used to build the example wordlist:
 
 ``` shell
 ./target/release/captain_crunch --progress --config sample.yml --output output.txt
