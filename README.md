@@ -1,5 +1,7 @@
 # Captain Crunch
 
+![u n da captain make it happen](https://github.com/graves/captain_crunch/raw/main/readme.png)
+
 Captain Crunch is a modern wordlist generator that let's you specify a collection of character sets and then generate all possible permutations. It is the spiritual successor to [Crunch.](https://sourceforge.net/projects/crunch-wordlist/)
 
 Captain Crunch is multi-threaded, relatively fast, and written in Rust.
