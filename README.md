@@ -19,7 +19,7 @@ The binary provides a `--help` flag for displaying usage information.
 
 Captain Crunch 0.1.0
 Thomas Graves <0o0o0o0o0@protonmail.ch>
-Captain Crunch is a modern wordlist generator that let's you specify a collection of character sets
+Captain Crunch is a modern wordlist generator that lets you specify a collection of character sets
 and then generate all possible permutations.
 
 USAGE:
