@@ -40,9 +40,9 @@ Captain Crunch requires a configuration file in yaml format beginning with `part
 
 ``` yaml
 parts:
-  - "c,C"
-  - "at"
-  - "!,"
+  - 'c|C'
+  - 'at'
+  - '!|'
 ```
 
 This sample file produces the following combinations:
@@ -55,7 +55,8 @@ Cat
 ```
 
 As you can see:
-- The first letter can be either a capital or lowercase C (the possibilities are seperated by commas)
+- Each part of the word begins on it's own line and MUST BE SINGLE QUOTED (this is important for correctly parsing yaml files)
+- The first letter can be either a capital or lowercase C (the possibilities are seperated by |)
 - The second two letters are always: at
 - The last character is either an ! or empty
 
@@ -68,3 +69,64 @@ The following command was used to build the example wordlist:
 ```
 
 Beware of using the `--progress` flag when generating extremely large lists as it substantially slows the process due to threads needing to wait for a second Mutex lock.
+
+## Advanced
+
+Captain Crunch configuration files also support more advanced options like character escaping and generating all possible strings based on a Regular Expression. See `sample_advanced.yml` for an example:
+
+``` yaml
+parts:
+  - 'c|C|\|'
+  - 'at'
+  - '!|'
+  - regex: '[a-z]{2}'
+```
+
+Starting with the first line we see that the \ (backslash) character is used to escape characters. This is useful if the | or ' characters are required in a part of the words you'd like to generate.
+
+Looking at the last line, we see that we can start any line with `regex:` and follow it with a single quoted regex string. Captain Crunch will generate all possible strings that match the regular expression and use them to build the wordlist. This regex will end every word generated with exactly 2 lowercase characters in the english alphabet from a to z, for example:
+
+```
+aa
+ab
+ac
+ad
+...
+...
+zx
+zy
+zz
+```
+
+The `sample_advanced.yml` file generates 4056 different permutations. A portion of the output is displayed below:
+
+```
+Catdb
+Catdc
+Catdd
+Catde
+Catdf
+Catdg
+Catdh
+Catdi
+|atzs
+|atzt
+|atzu
+|atzv
+|atzw
+|atzx
+|atzy
+|atzz
+catsj
+catbp
+|at!wy
+|atjr
+|at!rx
+|at!ts
+Cat!zp
+|atob
+Cattd
+|atzc
+|at!tw
+```
+

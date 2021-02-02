@@ -8,6 +8,8 @@ use std::sync::{Arc, Mutex};
 use serde;
 use serde::{Serialize, Deserialize};
 use pbr::ProgressBar;
+use std::collections::BTreeMap;
+use regen::{Generator, Result};
 
 
 #[derive(Debug, Deserialize, PartialEq)]
@@ -19,6 +21,7 @@ struct Builder {
 #[serde(untagged)]
 enum FormatString {
     Part(String),
+    Regex(BTreeMap<String, String>),
 }
 
 fn main() {
@@ -30,7 +33,7 @@ fn main() {
             .short('c')
             .long("config")
             .value_name("FILE")
-            .about("Sets a custom config file")
+            .about("Sets the config file that defines how to generate words")
             .takes_value(true)
             .required(true))
         .arg(Arg::new("output")
@@ -43,7 +46,7 @@ fn main() {
         .arg(Arg::new("progress")
             .short('p')
             .long("progress")
-            .about("Display progress bar (VERY SLOW!)")
+            .about("Display progress bar (VERY SLOW FOR LARGE SETS!)")
             .takes_value(false)
             .required(false))
         .get_matches();
@@ -99,10 +102,53 @@ fn main() {
 fn parse_format_strings(builder: Builder) -> Vec<Vec<String>> {
     let mut all = Vec::new();
 
-    for FormatString::Part(part) in builder.parts.iter() {
-        let options = part.split(",").map(String::from).collect();
-        all.push(options);
+    for format_string in builder.parts.iter() {
+        match format_string {
+            FormatString::Part(part) => {
+                let options = tokenize(part);
+                all.push(options);
+            },
+            FormatString::Regex(regex) => {
+                let mut strings = Vec::new();
+
+                let mut out = Vec::new();
+                let options = &regex["regex"];
+                let mut gen = Generator::new(&options).unwrap();
+                while gen.append_next(&mut out).is_some() {
+                    let s = String::from_utf8_lossy(&out);
+                    strings.push(String::from(s));
+                    out.clear();
+                }
+
+                all.push(strings);
+            }
+        }
     }
 
     all
+}
+
+const SEPARATOR: char = '|';
+const ESCAPE: char = '\\';
+
+fn tokenize(string: &str) -> Vec<String> {
+    let mut token = String::new();
+    let mut tokens: Vec<String> = Vec::new();
+    let mut chars = string.chars();
+    while let Some(ch) = chars.next() {
+        match ch {
+            SEPARATOR => {
+                tokens.push(token);
+                token = String::new();
+            },
+            ESCAPE => {
+                if let Some(next) = chars.next() {
+                    token.push(next);
+                }
+            },
+            _ => token.push(ch),
+        }
+    }
+    tokens.push(token);
+    tokens
 }
