@@ -25,7 +25,7 @@ fn main() {
     let matches = App::new("Captain Crunch")
         .version("0.1.0")
         .author("Thomas Graves <0o0o0o0o0@protonmail.ch>")
-        .about("Captain Crunch is a modern wordlist generator that let's you specify a collection of character sets and then generate all possible permutations.")
+        .about("Captain Crunch is a modern wordlist generator that lets you specify a collection of character sets and then generate all possible permutations.")
         .arg(Arg::new("config")
             .short('c')
             .long("config")
